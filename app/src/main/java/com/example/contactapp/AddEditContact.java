@@ -33,10 +33,10 @@ public class AddEditContact extends AppCompatActivity {
     private FloatingActionButton fab;
 
     //String variable
-    String name,phone,email,note;
+    private String name,phone,email,note;
 
     //action bar
-    ActionBar actionBar;
+    private ActionBar actionBar;
 
     //permission constant
     private static final int CAMERA_PERMISSION_CODE = 100;
@@ -49,12 +49,18 @@ public class AddEditContact extends AppCompatActivity {
     private String[] storagePermission;
 
     //Image uri var
-    Uri imageUri;
+    private Uri imageUri;
+
+    //database helper
+    private DbHelper dbHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_edit_contact);
+
+        //init db
+        dbHelper = new DbHelper(this);
 
         //init permission
         cameraPermission = new String[]{Manifest.permission.CAMERA,Manifest.permission.WRITE_EXTERNAL_STORAGE};
@@ -152,10 +158,26 @@ public class AddEditContact extends AppCompatActivity {
         email = emailEt.getText().toString();
         note = noteEt.getText().toString();
 
+        //get current time to save as added time
+        String timeStamp = ""+System.currentTimeMillis();
+
         //check filled data
         if (!name.isEmpty() || !phone.isEmpty() || !email.isEmpty() || !note.isEmpty()){
             //save data, if user have only one data
             //function for save data in SQLite.
+            long id = dbHelper.insertContact(
+                    ""+imageUri,
+                    ""+name,
+                    ""+phone,
+                    ""+email,
+                    ""+note,
+                    ""+timeStamp,
+                    ""+timeStamp
+            );
+
+            //to check insert data successful , show a toast msg
+            Toast.makeText(getApplicationContext(), "Inserted"+id, Toast.LENGTH_SHORT).show();
+
         }else {
             //show toast message
             Toast.makeText(getApplicationContext(), "Nothing to save...", Toast.LENGTH_SHORT).show();
@@ -253,4 +275,6 @@ public class AddEditContact extends AppCompatActivity {
 
     //create view in java file
     //profile image and crop functionality
+
+    //insert data into database from addeditcontact class
 }
