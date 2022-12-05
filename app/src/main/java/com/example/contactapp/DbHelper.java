@@ -2,11 +2,14 @@ package com.example.contactapp;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import androidx.annotation.Nullable;
 import androidx.core.database.sqlite.SQLiteDatabaseKt;
+
+import java.util.ArrayList;
 
 //class for database helper
 public class DbHelper extends SQLiteOpenHelper {
@@ -61,4 +64,40 @@ public class DbHelper extends SQLiteOpenHelper {
         //return id
         return id;
     }
+
+    //getdata
+    public ArrayList<ModelContact> getAllData(){
+
+        //create arraylist
+        ArrayList<ModelContact> arrayList = new ArrayList<>();
+        //sql command query
+        String selectQuery = "SELECT * FROM "+Constants.TABLE_NAME;
+
+        //get readable db
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery,null);
+
+        //looping
+        if (cursor.moveToFirst()){
+            do {
+
+                ModelContact modelContact = new ModelContact(
+                        ""+cursor.getInt(cursor.getColumnIndexOrThrow(Constants.C_ID)),
+                        ""+cursor.getInt(cursor.getColumnIndexOrThrow(Constants.C_NAME)),
+                        ""+cursor.getInt(cursor.getColumnIndexOrThrow(Constants.C_IMAGE)),
+                        ""+cursor.getInt(cursor.getColumnIndexOrThrow(Constants.C_PHONE)),
+                        ""+cursor.getInt(cursor.getColumnIndexOrThrow(Constants.C_EMAIL)),
+                        ""+cursor.getInt(cursor.getColumnIndexOrThrow(Constants.C_NOTE)),
+                        ""+cursor.getInt(cursor.getColumnIndexOrThrow(Constants.C_ADDED_TIME)),
+                        ""+cursor.getInt(cursor.getColumnIndexOrThrow(Constants.C_UPDATED_TIME))
+                );
+
+                arrayList.add(modelContact);
+
+            }while (cursor.moveToNext());
+        }
+        db.close();
+        return arrayList;
+    }
+
 }
